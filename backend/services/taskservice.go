@@ -80,9 +80,15 @@ func (s *TaskService) Create(task *Task) (*Task, error) {
 		log.Printf("%s", err.Error())
 	}
 
-	log.Printf("ID: %v", id)
-
 	task.ID = uint(id)
 
 	return task, nil
+}
+
+func (s *TaskService) TaskDone(id uint) error {
+	stmt := fmt.Sprintf(`UPDATE Note SET done = '%s' WHERE id = %d`, time.Now().Format(time.RFC3339), id)
+
+	_, err := s.DB.Execute(stmt)
+
+	return err
 }

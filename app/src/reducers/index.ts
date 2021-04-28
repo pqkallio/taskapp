@@ -13,6 +13,14 @@ const applicationReducers = (
     switch (action.type) {
       case 'tasks/put':
         return action.payload;
+      case 'tasks/add':
+        return [...state, action.payload];
+      case 'tasks/done':
+        return [
+          ...state.map((task) =>
+            task.id !== action.payload ? task : { ...task, done: new Date() },
+          ),
+        ];
       default:
         return state;
     }

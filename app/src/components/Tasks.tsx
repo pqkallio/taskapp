@@ -12,16 +12,31 @@ const Tasks: React.FC = () => {
     dispatch({ type: 'tasks/fetch' });
   }, []);
 
+  const taskDone = (id: number) => () => {};
+
   return (
     <>
       <h2>Tasks</h2>
       <TaskCreator />
-      {tasks.map((task: Task) => (
-        <div key={task.created.toISOString()}>
-          {task.created.toDateString()} {task.title}: {task.content},{' '}
-          {task.done ? 'done' : 'not done'}
-        </div>
-      ))}
+      <h3>Open</h3>
+      {tasks
+        .filter((task: Task) => !task.done)
+        .map((task: Task) => (
+          <div key={task.created.toISOString()}>
+            {task.created.toDateString()} {task.title}: {task.content},{' '}
+            {task.done ? 'done' : 'not done'}
+            <button onClick={taskDone(task.id)}>Done</button>
+          </div>
+        ))}
+      <h3>Done</h3>
+      {tasks
+        .filter((task: Task) => task.done)
+        .map((task: Task) => (
+          <div key={task.created.toISOString()}>
+            {task.created.toDateString()} {task.title}: {task.content},{' '}
+            {task.done ? 'done' : 'not done'}
+          </div>
+        ))}
     </>
   );
 };

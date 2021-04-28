@@ -1,6 +1,6 @@
 import React, { ChangeEvent } from 'react';
 import { useDispatch } from 'react-redux';
-import type { TaskProspect } from 'src/types';
+import type { NotifiableAction, TaskProspect } from 'src/types';
 
 const TaskCreator: React.FC = () => {
   const newTask = { title: '', content: '' };
@@ -24,11 +24,13 @@ const TaskCreator: React.FC = () => {
   };
 
   const addTask = () => {
-    dispatch({
+    const action: NotifiableAction<TaskProspect> = {
       type: 'tasks/create',
+      payload: task,
       notifySuccess: onSuccess,
       notifyError: onError,
-    });
+    };
+    dispatch(action);
   };
 
   return (

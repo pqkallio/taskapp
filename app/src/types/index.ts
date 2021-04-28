@@ -14,6 +14,14 @@ export type RawTask = Task & {
 
 export type TaskProspect = Pick<Task, 'title' | 'content'>;
 
-export type ErrorResponse = {
-  error: string;
+export type APIResponse<T> = {
+  error?: string;
+  data?: T;
+};
+
+export type NotifiableAction<T> = {
+  type: string;
+  payload: T;
+  notifySuccess: () => void;
+  notifyError: (err: string) => void;
 };

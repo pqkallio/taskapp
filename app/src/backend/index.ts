@@ -1,4 +1,4 @@
-import type { ErrorResponse, RawTask, Task, TaskProspect } from 'src/types';
+import type { APIResponse, RawTask, Task, TaskProspect } from 'src/types';
 
 class BackendAPI {
   private static instance: BackendAPI;
@@ -47,9 +47,10 @@ class BackendAPI {
     }
   }
 
-  async createTask(task: TaskProspect): Promise<Task | ErrorResponse> {
+  async createTask(task: TaskProspect): Promise<APIResponse<Task>> {
+    const body = JSON.stringify(task);
     const request: RequestInit = {
-      body: JSON.stringify(task),
+      body,
       method: 'POST',
     };
 
@@ -61,7 +62,27 @@ class BackendAPI {
         return { error: rawResponse.error };
       }
 
-      return this.transformRawTask(rawResponse as RawTask);
+      return { data: this.transformRawTask(rawResponse as RawTask) };
+    } catch (error: any) {
+      console.log(error);
+      return { error };
+    }
+  }
+
+  async taskDone(id: number): Promise<APIResponse<unknown>> {
+    const request = {
+      method: 'PUT',
+    };
+
+    try {
+      const response = await fetch(`${this.apiAddress}/${id}/done`);
+      const rawResponse = await response.json();
+
+      if (rawResponse.error) {
+        return { error: rawResponse.error };
+      }
+
+      return {};
     } catch (error: any) {
       console.log(error);
       return { error };

@@ -2,12 +2,13 @@ package server
 
 import (
 	"tasks-backend/services"
-	"time"
 
 	"github.com/gin-gonic/gin"
 
 	"encoding/json"
 	"net/http"
+	"strconv"
+	"time"
 )
 
 func (s *Server) getAllTasks() gin.HandlerFunc {
@@ -41,5 +42,23 @@ func (s *Server) createTask() gin.HandlerFunc {
 		}
 
 		c.JSON(http.StatusCreated, createdTask)
+	}
+}
+
+func (s *Server) taskDone() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		id, err := strconv.ParseUint(c.Param("id"), 10, 64)
+		if err != nil {
+			errorResponse(c, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		err = s.taskService.TaskDone(uint(id))
+		if err != nil {
+			errorResponse(c, http.StatusInternalServerError, err.Error())
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"id": id})
 	}
 }
