@@ -32,4 +32,7 @@ module.exports = {
   buildOptions: {
     /* ... */
   },
+  env: {
+    BACKEND_ADDRESS: 'http://localhost:6868',
+  },
 };
