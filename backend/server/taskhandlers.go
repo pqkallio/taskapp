@@ -1,6 +1,7 @@
 package server
 
 import (
+	"log"
 	"tasks-backend/services"
 
 	"github.com/gin-gonic/gin"
@@ -39,6 +40,16 @@ func (s *Server) createTask() gin.HandlerFunc {
 		if err != nil {
 			errorResponse(c, http.StatusInternalServerError, err.Error())
 			return
+		}
+
+		for ip, conn := range s.wsConnections {
+			err := conn.WriteJSON(createdTask)
+			if err != nil {
+				log.Printf("Error sending message to %s: %s", ip, err.Error())
+				log.Printf("Closing connection to %s", ip)
+				_ = conn.Close()
+				delete(s.wsConnections, ip)
+			}
 		}
 
 		c.JSON(http.StatusCreated, createdTask)

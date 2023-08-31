@@ -1,10 +1,12 @@
 package server
 
 import (
+	"log"
 	"tasks-backend/services"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
 
 	"fmt"
 	"net/http"
@@ -16,8 +18,9 @@ const (
 )
 
 type Server struct {
-	router      *gin.Engine
-	taskService *services.TaskService
+	router        *gin.Engine
+	taskService   *services.TaskService
+	wsConnections map[string]*websocket.Conn
 }
 
 func New(taskService *services.TaskService) *Server {
@@ -37,6 +40,7 @@ func New(taskService *services.TaskService) *Server {
 	server := &Server{
 		router,
 		taskService,
+		make(map[string]*websocket.Conn),
 	}
 
 	return server
@@ -46,5 +50,13 @@ func (s *Server) Start(port string) error {
 	s.initRoutes()
 
 	address := fmt.Sprintf(":%s", port)
+
+	defer func() {
+		for ip, conn := range s.wsConnections {
+			log.Printf("Closing connection to %s", ip)
+			_ = conn.Close()
+		}
+	}()
+
 	return s.router.Run(address)
 }

@@ -6,6 +6,7 @@ class BackendAPI {
 
   private constructor() {
     this.apiAddress = import.meta.env.BACKEND_ADDRESS;
+    console.log('apiAddress', this.apiAddress);
   }
 
   private transformRawTasks(rawTasks: RawTask[]): Task[] {

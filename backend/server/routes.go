@@ -7,6 +7,7 @@ const (
 func (s *Server) initRoutes() {
 	api := s.router.Group(taskEndpoint)
 	{
+		api.GET("/initSocket", s.initSocket())
 		api.GET("/", s.getAllTasks())
 		api.GET("", s.getAllTasks())
 		api.POST("/", s.createTask())
